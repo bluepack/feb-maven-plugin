@@ -1,0 +1,285 @@
+{
+    "swagger":"2.0",
+    "info":{
+        "title":"IBM Forms Experience Builder",
+        "description":"A swagger description of the REST APIs exposed by IBM Forms Experience Builder",
+        "version":"8.6.3"
+    },
+    "host":"localhost",
+    "basePath":"/forms-basic",
+    "schemes":[
+        "http",
+        "https"
+    ],
+    "externalDocs":{
+        "description":"The REST API reference within the IBM Knowledge Center documentation for the Forms Experience Builder.",
+        "url":"http://www.ibm.com/support/knowledgecenter/SS6KJL_8.6.3/FEB/ref_rest_api_ref.dita"
+    },
+    "paths":{
+
+        "/{access-type}/org/app":{
+            "post":{
+                "summary":"Import Application",
+                "description":"Import a new application.",
+                "externalDocs":{
+                    "description":"IBM Knowledge Center - *Import*",
+                    "url":"http://www.ibm.com/support/knowledgecenter/SS6KJL_8.6.3/FEB/ref_rest_api_auto_deploy.dita"
+                },
+                "operationId":"import_application",
+                "parameters":[
+                    {
+                        "name":"access-type",
+                        "in":"path",
+                        "description":"The API Call's security mode.",
+                        "required":true,
+                        "type":"string",
+                        "enum":[
+                            "secure",
+                            "anon"
+                        ],
+                        "default":"secure"
+                    },
+                    {
+                        "name":"deploy",
+                        "in":"query",
+                        "description":"Whether the imported application should be deployed.",
+                        "required":false,
+                        "type":"boolean",
+                        "default":false
+                    },
+                    {
+                        "name":"importData",
+                        "in":"query",
+                        "description":"Import any existing submission data.",
+                        "required":false,
+                        "type":"boolean",
+                        "default":false
+                    },
+                    {
+                        "name":"cleanIds",
+                        "in":"query",
+                        "description":"If true, removes all groups and users from roles within the imported application ensuring that only the current authenticated user has access to the application.",
+                        "required":false,
+                        "type":"boolean",
+                        "default":false
+                    },
+                    {
+                        "name":"filename",
+                        "in":"formData",
+                        "description":"Name of the nitro_s file",
+                        "required":true,
+                        "type":"file"
+                    }
+                ],
+                "consumes":[
+                    "multipart/form-data"
+                ],
+                "produces":[
+                    "application/x-EAndA"
+                ],
+                "responses":{
+                    "200":{
+                        "description":"A successful response"
+                    },
+                    "500":{
+                        "description":"Unexpected error"
+                    }
+                },
+                "tags":[
+                    "Application Management REST API"
+                ]
+            }
+        },
+        "/{access-type}/org/app/{app-uid}":{
+            "delete":{
+                "summary":"Delete Application",
+                "description":"This action deletes an application.",
+                "externalDocs":{
+                    "description":"IBM Knowledge Center - *Delete*",
+                    "url":"http://www.ibm.com/support/knowledgecenter/SS6KJL_8.6.3/FEB/ref_rest_api_auto_deploy.dita"
+                },
+                "operationId":"delete_application",
+                "parameters":[
+                    {
+                        "name":"access-type",
+                        "in":"path",
+                        "description":"The API Call's security mode.",
+                        "required":true,
+                        "type":"string",
+                        "enum":[
+                            "secure",
+                            "anon"
+                        ],
+                        "default":"secure"
+                    },
+                    {
+                        "name":"app-uid",
+                        "in":"path",
+                        "description":"The universal ID of the application being deleted.",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "name":"freedomIdentifyKey",
+                        "in":"query",
+                        "description":"A token which must be provided both in this query parameter and in a cookie with the same name. The content of the token does not matter but the content of the query parameter and of the cookie MUST match in order for the request to be processed.",
+                        "required":true,
+                        "type":"string"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"A successful response"
+                    },
+                    "500":{
+                        "description":"Unexpected error"
+                    }
+                },
+                "tags":[
+                    "Application Management REST API"
+                ]
+            }
+        },
+        "/{access-type}/org/app/{app-uid}/archive":{
+            "get":{
+                "summary":"Export Application",
+                "description":"This action exports an application.",
+                "externalDocs":{
+                    "description":"IBM Knowledge Center - *Export*",
+                    "url":"http://www.ibm.com/support/knowledgecenter/SS6KJL_8.6.3/FEB/ref_rest_api_auto_deploy.dita"
+                },
+                "operationId":"export_application",
+                "parameters":[
+                    {
+                        "name":"access-type",
+                        "in":"path",
+                        "description":"The access type.",
+                        "required":true,
+                        "type":"string",
+                        "enum":[
+                            "secure",
+                            "anon"
+                        ],
+                        "default":"secure"
+                    },
+                    {
+                        "name":"app-uid",
+                        "in":"path",
+                        "description":"The application uid of the targetted application.",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "name":"submitted",
+                        "in":"query",
+                        "description":"Whether the submission data should be exported along with the application.",
+                        "required":false,
+                        "type":"boolean",
+                        "default":true
+                    }
+                ],
+                "consumes":[
+
+                ],
+                "produces":[
+                    "multipart/form-data"
+                ],
+                "responses":{
+                    "200":{
+                        "description":"A successful response",
+                        "schema":{
+                            "type":"file"
+                        }
+                    },
+                    "500":{
+                        "description":"Unexpected error"
+                    }
+                },
+                "tags":[
+                    "Application Management REST API"
+                ]
+            },
+            "post":{
+                "summary":"Upgrade Application",
+                "description":"This action upgrades the content of an application to match the application contained in the POST request.",
+                "externalDocs":{
+                    "description":"IBM Knowledge Center - *Upgrade*",
+                    "url":"http://www.ibm.com/support/knowledgecenter/SS6KJL_8.6.3/FEB/ref_rest_api_auto_deploy.dita"
+                },
+                "operationId":"upgrade_application",
+                "parameters":[
+                    {
+                        "name":"access-type",
+                        "in":"path",
+                        "description":"The access type.",
+                        "required":true,
+                        "type":"string",
+                        "enum":[
+                            "secure",
+                            "anon"
+                        ],
+                        "default":"secure"
+                    },
+                    {
+                        "name":"app-uid",
+                        "in":"path",
+                        "description":"The Universal ID of the application being upgraded.",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "name": "replaceSubmittedData",
+                        "in": "query",
+                        "description": "Whether to replace the existing submission data with the data in the uploaded application.",
+                        "required": false,
+                        "type": "string",
+                        "enum":[
+                            "on",
+                            "off"
+                        ],
+                        "default":"off"
+                    },
+                    {
+                        "name":"filename",
+                        "in":"formData",
+                        "description":"The application nitro_s file to upgrade from.",
+                        "required":true,
+                        "type":"file"
+                    }
+                ],
+                "consumes":[
+                    "multipart/form-data"
+                ],
+                "produces":[
+
+                ],
+                "responses":{
+                    "200":{
+                        "description":"A successful response"
+                    },
+                    "500":{
+                        "description":"Unexpected error"
+                    }
+                },
+                "tags":[
+                    "Application Management REST API"
+                ]
+            }
+        }
+    },
+    "securityDefinitions":{
+        "basic":{
+            "type":"basic",
+            "description":"The standard authentication for all endpoints under the /forms-basic context root."
+        }
+    },
+    "security":[
+        {
+            "basic":[
+
+            ]
+        }
+    ],
+    "definitions":{
+    }
+}
