@@ -240,6 +240,28 @@
                         "default":"off"
                     },
                     {
+                        "name": "replaceEmbeddedData",
+                        "in": "query",
+                        "required": false,
+                        "type": "string",
+                        "enum":[
+                            "on",
+                            "off"
+                        ],
+                        "default":"on"
+                    },
+                    {
+                        "name": "runDatabaseUpgradeNow",
+                        "in": "query",
+                        "required": false,
+                        "type": "string",
+                        "enum":[
+                            "on",
+                            "off"
+                        ],
+                        "default":"on"
+                    },
+                    {
                         "name":"filename",
                         "in":"formData",
                         "description":"The application nitro_s file to upgrade from.",

@@ -33,6 +33,10 @@ public class FEBDeployMojo extends AbstractMojo {
 	public enum AccessType {
 		secure, anon
 	}
+	
+	public enum FEBSwitch {
+		on, off
+	}
 
 	/**
 	 * The hostname of the FEB instance where the form will be deployed
@@ -90,8 +94,8 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * 
      * @since 1.0
 	 */
-	@Parameter
-	private boolean replaceSubmittedData;
+	@Parameter(defaultValue = "off")
+	private FEBSwitch replaceSubmittedData;
 	
 	/**
      * @since 1.0
@@ -135,8 +139,7 @@ public class FEBDeployMojo extends AbstractMojo {
 
 		ApplicationManagementRESTAPIApi febMgmtRESTApi = new ApplicationManagementRESTAPIApi(apiClient);
 		try {
-			febMgmtRESTApi.upgradeApplication(accessType.toString(), appUid, filename,
-					Boolean.toString(replaceSubmittedData));
+			febMgmtRESTApi.upgradeApplication(accessType.toString(), appUid, filename, replaceSubmittedData.toString(), FEBSwitch.on.toString(), FEBSwitch.on.toString());
 		} catch (ApiException e) {
 			getLog().error("An error ocurred while deploying FEB application", e);
 		}
