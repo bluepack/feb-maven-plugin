@@ -179,9 +179,9 @@
 						</goals>
 						<configuration>
 							<language>java</language>
-							<modelPackage>${generated-pkg-prefix}.${groupId}.client.model</modelPackage>
-							<apiPackage>${generated-pkg-prefix}.${groupId}.client.api</apiPackage>
-							<invokerPackage>${generated-pkg-prefix}.${groupId}.client.invoker</invokerPackage>
+							<modelPackage>${generated-pkg-prefix}.${project.groupId}.client.model</modelPackage>
+							<apiPackage>${generated-pkg-prefix}.${project.groupId}.client.api</apiPackage>
+							<invokerPackage>${generated-pkg-prefix}.${project.groupId}.client.invoker</invokerPackage>
 						</configuration>
 					</execution>
 				</executions>
