@@ -103,6 +103,27 @@ public class FEBDeployMojo extends AbstractMojo {
 	private FEBSwitch replaceSubmittedData;
 
 	/**
+	 * If true automatically deploys the application as part of the import.
+	 */
+	@Parameter(defaultValue = "true")
+	private boolean deploy = true;
+
+	/**
+	 * If true imports the submission data, or submitted records, if they were
+	 * included when the application was exported.
+	 */
+	@Parameter(defaultValue = "false")
+	private boolean importData = false;
+
+	/**
+	 * If true removes all groups and users from roles within the imported
+	 * application ensuring that only the current authenticated user has access
+	 * to the application.
+	 */
+	@Parameter(defaultValue = "false")
+	private boolean cleanIds = false;
+
+	/**
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${settings}", readonly = true, required = true)
@@ -159,6 +180,7 @@ public class FEBDeployMojo extends AbstractMojo {
 						FEBSwitch.on.toString(), filename, replaceSubmittedData.toString());
 			} else {
 				getLog().info("Form does not exist on the target server, it will be created");
+				febMgmtRESTApi.importApplication(accessType.toString(), filename, deploy, importData, cleanIds);
 			}
 		} catch (ApiException e) {
 			throw new MojoFailureException("An error ocurred while deploying FEB application", e);
