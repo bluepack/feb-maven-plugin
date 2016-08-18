@@ -33,15 +33,18 @@ public class FEBDeployMojo extends AbstractMojo {
 	public enum AccessType {
 		secure, anon
 	}
-	
+
 	public enum FEBSwitch {
 		on, off
 	}
 
+	private static final String ACCEPT_ENC = "gzip, deflate, sdch";
+	private static final String DEFAULT_MODE = "source";
+
 	/**
 	 * The hostname of the FEB instance where the form will be deployed
 	 * 
-     * @since 1.0
+	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "http://localhost/")
 	private URL basePath;
@@ -49,33 +52,35 @@ public class FEBDeployMojo extends AbstractMojo {
 	/**
 	 * FEB security mode
 	 * 
-     * @since 1.0
+	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "secure")
 	private AccessType accessType;
 
 	/**
-     * FEB Administrator username. If not given, it will be looked up through <code>settings.xml</code>'s server with
-     * <code>${settingsKey}</code> as key.
-     *
-     * @since 1.0
-     */
-    @Parameter( property = "username" )
-    private String username;
+	 * FEB Administrator username. If not given, it will be looked up through
+	 * <code>settings.xml</code>'s server with <code>${settingsKey}</code> as
+	 * key.
+	 *
+	 * @since 1.0
+	 */
+	@Parameter(property = "username")
+	private String username;
 
-    /**
-     * FEB Administrator password. If not given, it will be looked up through <code>settings.xml</code>'s server with
-     * <code>${settingsKey}</code> as key.
-     *
-     * @since 1.0
-     */
-    @Parameter( property = "password" )
-    private String password;
+	/**
+	 * FEB Administrator password. If not given, it will be looked up through
+	 * <code>settings.xml</code>'s server with <code>${settingsKey}</code> as
+	 * key.
+	 *
+	 * @since 1.0
+	 */
+	@Parameter(property = "password")
+	private String password;
 
 	/**
 	 * The universal ID of the FEB application
 	 * 
-     * @since 1.0
+	 * @since 1.0
 	 */
 	@Parameter(required = true)
 	private String appUid;
@@ -83,7 +88,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	/**
 	 * Name of the nitro_s file
 	 * 
-     * @since 1.0
+	 * @since 1.0
 	 */
 	@Parameter(required = true)
 	private File filename;
@@ -92,33 +97,33 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * Whether to replace the existing submission data with the data in the
 	 * uploaded application
 	 * 
-     * @since 1.0
+	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "off")
 	private FEBSwitch replaceSubmittedData;
-	
+
 	/**
-     * @since 1.0
-     */
-    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
-    private Settings settings;
-	
-    /**
-     * Server's <code>id</code> in <code>settings.xml</code> to look up username and password. Defaults to
-     * <code>${basePath}</code> if not given.
-     *
-     * @since 1.0
-     */
-    @Parameter( property = "settingsKey" )
-    private String settingsKey;
-    
-    /**
-     * MNG-4384
-     * 
-     * @since 1.0
-     */
-    @Component( role = org.sonatype.plexus.components.sec.dispatcher.SecDispatcher.class, hint = "default" )
-    private SecDispatcher securityDispatcher;
+	 * @since 1.0
+	 */
+	@Parameter(defaultValue = "${settings}", readonly = true, required = true)
+	private Settings settings;
+
+	/**
+	 * Server's <code>id</code> in <code>settings.xml</code> to look up username
+	 * and password. Defaults to <code>${basePath}</code> if not given.
+	 *
+	 * @since 1.0
+	 */
+	@Parameter(property = "settingsKey")
+	private String settingsKey;
+
+	/**
+	 * MNG-4384
+	 * 
+	 * @since 1.0
+	 */
+	@Component(role = org.sonatype.plexus.components.sec.dispatcher.SecDispatcher.class, hint = "default")
+	private SecDispatcher securityDispatcher;
 
 	/*
 	 * (non-Javadoc)
@@ -127,7 +132,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 */
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Deploying FEB Application " + appUid + " to " + basePath);
-		
+
 		ApiClient apiClient = new ApiClient();
 		apiClient.setBasePath(basePath.toString());
 
@@ -138,15 +143,31 @@ public class FEBDeployMojo extends AbstractMojo {
 		}
 
 		ApplicationManagementRESTAPIApi febMgmtRESTApi = new ApplicationManagementRESTAPIApi(apiClient);
+		Boolean formExists = null;
 		try {
-			febMgmtRESTApi.upgradeApplication(accessType.toString(), appUid, filename, replaceSubmittedData.toString(), FEBSwitch.on.toString(), FEBSwitch.on.toString());
+			// First check if the form exists
+			File currentForm = febMgmtRESTApi.exportApplication(accessType.toString(), appUid, DEFAULT_MODE, ACCEPT_ENC, false);
+			formExists = (currentForm != null);
 		} catch (ApiException e) {
-			getLog().error("An error ocurred while deploying FEB application", e);
+			formExists = false;
+		}
+
+		try {
+			if (formExists != null && formExists.booleanValue()) {
+				getLog().info("Form exists on the target server, it will be updated");
+				febMgmtRESTApi.upgradeApplication(accessType.toString(), appUid, FEBSwitch.on.toString(),
+						FEBSwitch.on.toString(), filename, replaceSubmittedData.toString());
+			} else {
+				getLog().info("Form does not exist on the target server, it will be created");
+			}
+		} catch (ApiException e) {
+			throw new MojoFailureException("An error ocurred while deploying FEB application", e);
 		}
 	}
 
 	/**
-	 * Load username password from settings if user has not set them in JVM properties
+	 * Load username password from settings if user has not set them in JVM
+	 * properties
 	 * 
 	 * @throws MojoExecutionException
 	 */

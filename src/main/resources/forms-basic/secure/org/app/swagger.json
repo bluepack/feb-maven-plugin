@@ -176,13 +176,31 @@
                         "required":false,
                         "type":"boolean",
                         "default":true
+                    },
+                    {
+                        "name":"mode",
+                        "in":"query",
+                        "required":true,
+                        "type":"string",
+                        "default":"source"
+                    },
+                    {
+                        "name": "Accept-Encoding",
+                        "in": "header",
+                        "description": "token to be passed as a header",
+                        "required": true,
+                        "default": "gzip, deflate, sdch"
                     }
                 ],
                 "consumes":[
 
                 ],
                 "produces":[
-                    "multipart/form-data"
+                    "text/html",
+                    "application/xhtml+xml",
+                    "application/xml;q=0.9",
+                    "image/webp",
+                    "*/*;q=0.8"
                 ],
                 "responses":{
                     "200":{
@@ -242,7 +260,7 @@
                     {
                         "name": "replaceEmbeddedData",
                         "in": "query",
-                        "required": false,
+                        "required": true,
                         "type": "string",
                         "enum":[
                             "on",
@@ -253,7 +271,7 @@
                     {
                         "name": "runDatabaseUpgradeNow",
                         "in": "query",
-                        "required": false,
+                        "required": true,
                         "type": "string",
                         "enum":[
                             "on",
