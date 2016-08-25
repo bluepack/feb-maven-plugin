@@ -1,6 +1,7 @@
 package io.github.bluepack.feb.plugin;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -23,11 +24,11 @@ import io.github.bluepack.feb.client.invoker.ApiException;
  * Builder applications using the Application Management REST API.
  *
  * @author Denny Pichardo
- * @version 1.0
+ * @version 1.1
  * @since 2016-08-16
  */
 
-@Mojo(name = "feb-deploy", requiresProject = true)
+@Mojo(name = "feb-deploy", requiresProject = false)
 public class FEBDeployMojo extends AbstractMojo {
 
 	public enum AccessType {
@@ -40,14 +41,32 @@ public class FEBDeployMojo extends AbstractMojo {
 
 	private static final String ACCEPT_ENC = "gzip, deflate, sdch";
 	private static final String DEFAULT_MODE = "source";
+	private static final String FEB_CONTEXT_ROOT = "/forms-basic";
 
 	/**
 	 * The hostname of the FEB instance where the form will be deployed
 	 * 
-	 * @since 1.0
+	 * @since 1.1
 	 */
-	@Parameter(defaultValue = "http://localhost/")
-	private URL basePath;
+	@Parameter(defaultValue = "localhost")
+	private String hostname;
+	
+	/**
+	 * The HTTP port of the FEB server, if unspecified the value will be 80 or 443 based on the useSSL parameter
+	 * 
+	 * @since 1.1
+	 */
+	@Parameter
+	private Integer port;
+	
+	/**
+	 * If true it will use HTTPS when connecting to the FEB server
+	 * TODO: Add support for specifying SSL certs
+	 * 
+	 * @since 1.1
+	 */
+	@Parameter(defaultValue = "false")
+	private boolean useSSL = false;
 
 	/**
 	 * FEB security mode
@@ -152,10 +171,20 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * @see org.apache.maven.plugin.Mojo#execute()
 	 */
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		getLog().info("Deploying FEB Application " + appUid + " to " + basePath);
+		String febProtocol = useSSL ? "https" : "http";
+		int febPort = (port == null || port <= 0) ? (useSSL ? 443 : 80) : port.intValue();
+		URL febURL;
+		try {
+			febURL = new URL(febProtocol, hostname, febPort, FEB_CONTEXT_ROOT);
+		} catch (MalformedURLException mue) {
+			throw new MojoFailureException("Malformed FEB URL", mue);
+		}
+		String febURLStr = febURL.toString();
+		
+		getLog().info("Deploying FEB Application " + appUid + " to " + febURLStr);
 
 		ApiClient apiClient = new ApiClient();
-		apiClient.setBasePath(basePath.toString());
+		apiClient.setBasePath(febURLStr);
 
 		if (accessType == AccessType.secure) {
 			loadUserInfoFromSettings();
@@ -195,7 +224,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 */
 	private void loadUserInfoFromSettings() throws MojoExecutionException {
 		if (this.settingsKey == null) {
-			this.settingsKey = this.basePath.toString();
+			this.settingsKey = this.hostname.toString();
 		}
 
 		if ((this.username == null || this.password == null) && (this.settings != null)) {
