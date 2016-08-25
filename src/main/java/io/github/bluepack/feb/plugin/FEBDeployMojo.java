@@ -48,7 +48,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * 
 	 * @since 1.1
 	 */
-	@Parameter(defaultValue = "localhost")
+	@Parameter(defaultValue = "localhost", property = "feb.hostname")
 	private String hostname;
 	
 	/**
@@ -56,7 +56,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * 
 	 * @since 1.1
 	 */
-	@Parameter
+	@Parameter(property = "feb.port")
 	private Integer port;
 	
 	/**
@@ -65,7 +65,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * 
 	 * @since 1.1
 	 */
-	@Parameter(defaultValue = "false")
+	@Parameter(defaultValue = "false", property = "feb.useSSL")
 	private boolean useSSL = false;
 
 	/**
@@ -73,7 +73,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * 
 	 * @since 1.0
 	 */
-	@Parameter(defaultValue = "secure")
+	@Parameter(defaultValue = "secure", property = "feb.accessType")
 	private AccessType accessType;
 
 	/**
@@ -83,7 +83,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 *
 	 * @since 1.0
 	 */
-	@Parameter(property = "username")
+	@Parameter(property = "feb.username")
 	private String username;
 
 	/**
@@ -93,7 +93,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 *
 	 * @since 1.0
 	 */
-	@Parameter(property = "password")
+	@Parameter(property = "feb.password")
 	private String password;
 
 	/**
@@ -101,7 +101,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * 
 	 * @since 1.0
 	 */
-	@Parameter(required = true)
+	@Parameter(required = true, property = "feb.appUid")
 	private String appUid;
 
 	/**
@@ -109,7 +109,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * 
 	 * @since 1.0
 	 */
-	@Parameter(required = true)
+	@Parameter(required = true, property = "feb.filename")
 	private File filename;
 
 	/**
@@ -118,20 +118,20 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * 
 	 * @since 1.0
 	 */
-	@Parameter(defaultValue = "off")
+	@Parameter(defaultValue = "off", property = "feb.replaceSubmittedData")
 	private FEBSwitch replaceSubmittedData;
 
 	/**
 	 * If true automatically deploys the application as part of the import.
 	 */
-	@Parameter(defaultValue = "true")
+	@Parameter(defaultValue = "true", property = "feb.deploy")
 	private boolean deploy = true;
 
 	/**
 	 * If true imports the submission data, or submitted records, if they were
 	 * included when the application was exported.
 	 */
-	@Parameter(defaultValue = "false")
+	@Parameter(defaultValue = "false", property = "feb.importData")
 	private boolean importData = false;
 
 	/**
@@ -139,7 +139,7 @@ public class FEBDeployMojo extends AbstractMojo {
 	 * application ensuring that only the current authenticated user has access
 	 * to the application.
 	 */
-	@Parameter(defaultValue = "false")
+	@Parameter(defaultValue = "false", property = "feb.cleanIds")
 	private boolean cleanIds = false;
 
 	/**
