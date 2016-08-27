@@ -1,12 +1,13 @@
 # feb-maven-plugin
 [![Build Status](https://travis-ci.org/bluepack/feb-maven-plugin.svg?branch=master)](https://travis-ci.org/bluepack/feb-maven-plugin)
 
-Maven Plugin for deploying IBM Forms Experience Builder applications using the Application Management REST API
+Maven Plugin for deploying IBM Forms Experience Builder applications using the Application Management REST API.  
+For more information about this REST API visit the [IBM Knowledge Center](http://www.ibm.com/support/knowledgecenter/SS6KJL_8.6.3/FEB/ref_rest_api_auto_deploy.html)
 
 ## Goals
 
 ### feb-deploy
-Deploys a nitro_s file to IBM Forms Experience Builder.  
+Deploys a nitro_s file to IBM Forms Experience Builder.  This goal will either import or upgrade the form if it already exists.
 
 #### Installation
 
@@ -104,17 +105,17 @@ pom.xml plugins section
 
 #### Configuration options
 -------------------------
-+ **appUid** `String` - [Required] The universal ID of the FEB application. System property: *feb.appUid*.
-+ **filename** `File` - [Required] Path to the nitro_s file that will be deployed. System property: *feb.filename*.
++ **appUid** `String` - [Required] The universal ID of the FEB application. System property: *feb.appUid*
++ **filename** `File` - [Required] Path to the nitro_s file that will be deployed. System property: *feb.filename*
 + **hostname** `String` - The hostname of the FEB instance where the form will be deployed. System property: *feb.hostname*. Default value is: *localhost*
-+ **port** `Integer` - The HTTP port of the FEB server, if unspecified the value will be 80 or 443 based on the useSSL parameter. System property: *feb.port*. Default value is: *localhost*
++ **port** `Integer` - The HTTP port of the FEB server, if unspecified the value will be 80 or 443 based on the useSSL parameter. System property: *feb.port*
 + **useSSL** `Boolean` - [Not Implemented Yet] If true it will use HTTPS when connecting to the FEB server. System property: *feb.useSSL*. Default value is: *false*
 + **accessType** `Enum` - FEB security mode. System property: *feb.accessType*. Options: `secure`, `anon`. Default value is: *secure*
-+ **username** `String` - FEB Administrator username. If not given, it will be looked up through `settings.xml`'s server with ${settingsKey} as key. System property: *feb.username*.
-+ **password** `String` - FEB Administrator password. If not given, it will be looked up through `settings.xml`'s server with ${settingsKey} as key. System property: *feb.password*.
++ **username** `String` - FEB Administrator username. If not given, it will be looked up through `settings.xml`'s server with ${settingsKey} as key. System property: *feb.username*
++ **password** `String` - FEB Administrator password. If not given, it will be looked up through `settings.xml`'s server with ${settingsKey} as key. System property: *feb.password*
 + **settingsKey** `String` - Server's *id* in `settings.xml` to look up username and password. Defaults to ${hostname} if not given.
-+ **replaceSubmittedData** `Enum` - Turn on to replace the existing submission data with the data in the uploaded application. System property: *feb.replaceSubmittedData*. Options: `on`, `off`. Default value is: *off*
-+ **deploy** `Boolean` - If true automatically deploys the application as part of the import.. System property: *feb.deploy*. Default value is: *true*
-+ **importData** `Boolean` - If true imports the submission data included within the form. System property: *feb.importData*. Default value is: *false*
-+ **cleanIds** `Boolean` - If true removes all groups and users from roles within the imported application ensuring that only the current authenticated user has access to the application. System property: *feb.cleanIds*. Default value is: *false*
++ **replaceSubmittedData** `Enum` - (Used For Upgrading) Turn on to replace the existing submission data with the data in the uploaded application. System property: *feb.replaceSubmittedData*. Options: `on`, `off`. Default value is: *off*
++ **deploy** `Boolean` -  (Used For Upgrading) If true automatically deploys the application as part of the import.. System property: *feb.deploy*. Default value is: *true*
++ **importData** `Boolean` -  (Used For Importing) If true imports the submission data included within the form. System property: *feb.importData*. Default value is: *false*
++ **cleanIds** `Boolean` - (Used For Importing) If true removes all groups and users from roles within the imported application ensuring that only the current authenticated user has access to the application. System property: *feb.cleanIds*. Default value is: *false*
 
